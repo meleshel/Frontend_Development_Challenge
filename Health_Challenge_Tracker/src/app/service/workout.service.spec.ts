@@ -1,10 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { WorkoutService } from './workout.service';
+import { of } from 'rxjs';
 
 describe('WorkoutService', () => {
   let service: WorkoutService;
 
   beforeEach(() => {
+    // Clear localStorage before each test to prevent data leakage
+    localStorage.clear();
+
     // Set up testing module
     TestBed.configureTestingModule({
       providers: [WorkoutService],
@@ -28,7 +32,9 @@ describe('WorkoutService', () => {
     // Reinitialize the service to simulate the constructor logic
     const serviceWithWorkouts = new WorkoutService();
 
-    expect(serviceWithWorkouts.getWorkouts()).toEqual(workouts);
+    serviceWithWorkouts.workouts$.subscribe(workoutsFromService => {
+      expect(workoutsFromService).toEqual(workouts);
+    });
   });
 
   it('should return default workouts if no data in localStorage', () => {
@@ -42,7 +48,9 @@ describe('WorkoutService', () => {
       { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
     ];
 
-    expect(serviceWithDefaultWorkouts.getWorkouts()).toEqual(defaultWorkouts);
+    serviceWithDefaultWorkouts.workouts$.subscribe(workoutsFromService => {
+      expect(workoutsFromService).toEqual(defaultWorkouts);
+    });
   });
 
   it('should update workouts and save them to localStorage', () => {
@@ -61,7 +69,9 @@ describe('WorkoutService', () => {
       JSON.stringify(newWorkouts)
     );
 
-    expect(service.getWorkouts()).toEqual(newWorkouts);
+    service.workouts$.subscribe(workoutsFromService => {
+      expect(workoutsFromService).toEqual(newWorkouts);
+    });
   });
 
   it('should persist workouts to localStorage when updated', () => {
@@ -81,4 +91,3 @@ describe('WorkoutService', () => {
     );
   });
 });
-

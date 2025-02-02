@@ -1,27 +1,3 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-// import { WorkoutFormComponent } from './workout-form.component';
-
-// describe('WorkoutFormComponent', () => {
-//   let component: WorkoutFormComponent;
-//   let fixture: ComponentFixture<WorkoutFormComponent>;
-
-//   beforeEach(async () => {
-//     await TestBed.configureTestingModule({
-//       imports: [WorkoutFormComponent]
-//     })
-//     .compileComponents();
-
-//     fixture = TestBed.createComponent(WorkoutFormComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
-
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutFormComponent } from './workout-form.component';
 import { FormsModule } from '@angular/forms';
@@ -29,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('WorkoutFormComponent', () => {
   let component: WorkoutFormComponent;
@@ -36,9 +13,14 @@ describe('WorkoutFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FormsModule, MatInputModule, MatButtonModule, MatFormFieldModule],
-      declarations: [WorkoutFormComponent],
-      schemas: [NO_ERRORS_SCHEMA], // Ignores errors from missing children components
+      imports: [
+        FormsModule,
+        MatInputModule,
+        MatButtonModule,
+        MatFormFieldModule
+      ],
+      providers: [provideAnimations()],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(WorkoutFormComponent);
@@ -46,29 +28,30 @@ describe('WorkoutFormComponent', () => {
     fixture.detectChanges();
   });
 
+  beforeEach(() => {
+    // Clear localStorage before each test
+    localStorage.clear();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should submit the form when valid data is provided', () => {
-    // Mock valid form data
     component.username = 'John';
     component.workoutType = 'Cardio';
     component.minutes = 30;
 
-    // Spy on localStorage.setItem
     spyOn(localStorage, 'setItem');
 
     component.submitForm();
 
-    const savedWorkouts = JSON.parse(localStorage.getItem('workouts') || '[]');
-    expect(savedWorkouts.length).toBe(1);
-    expect(savedWorkouts[0]).toEqual({
-      username: 'John',
-      workoutType: 'Cardio',
-      minutes: 30,
-    });
-    expect(localStorage.setItem).toHaveBeenCalled();
+    // Check that setItem was called with the correct data
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      'workouts',
+      JSON.stringify([{ username: 'John', workoutType: 'Cardio', minutes: 30 }])
+    );
+    // Check form fields are reset
     expect(component.username).toBe('');
     expect(component.workoutType).toBe('');
     expect(component.minutes).toBeNull();
@@ -108,9 +91,33 @@ describe('WorkoutFormComponent', () => {
 
     component.submitForm();
 
-    const savedWorkouts = JSON.parse(localStorage.getItem('workouts') || '[]');
-    expect(savedWorkouts).toContain(workoutData);
-    expect(localStorage.setItem).toHaveBeenCalledWith('workouts', JSON.stringify(savedWorkouts));
+    // Verify setItem called with the new workout array
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      'workouts',
+      JSON.stringify([workoutData])
+    );
+  });
+
+  it('should append new workout to localStorage without overwriting', () => {
+    const initialWorkout = { username: 'Alice', workoutType: 'Running', minutes: 40 };
+    const newWorkout = { username: 'Bob', workoutType: 'Cycling', minutes: 60 };
+
+    // Set initial data
+    localStorage.setItem('workouts', JSON.stringify([initialWorkout]));
+
+    spyOn(localStorage, 'setItem');
+
+    component.username = newWorkout.username;
+    component.workoutType = newWorkout.workoutType;
+    component.minutes = newWorkout.minutes;
+
+    component.submitForm();
+
+    // Verify the combined array is passed to setItem
+    const expectedWorkouts = [initialWorkout, newWorkout];
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      'workouts',
+      JSON.stringify(expectedWorkouts)
+    );
   });
 });
-

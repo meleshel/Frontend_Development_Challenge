@@ -8,27 +8,24 @@ import { WorkoutListComponent } from './components/workout-list/workout-list.com
   imports: [WorkoutFormComponent, WorkoutListComponent],
   template: `
 <div>
-  <h1 class="text-center">
+  <h1 class="text-center text-2xl font-semibold mb-6">
     Welcome to {{ title }}!
   </h1>
 
-  <div>
-  <div class="flex flex-col items-center gap-6 w-full max-w-lg   bg-blue-500 p-4">
+  <div class="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-lg sm:max-w-md md:max-w-lg bg-blue-300 p-4 rounded-lg">
     <app-workout-form></app-workout-form>
   </div>
   
-  <div class="absolute top-16 right-4 bg-green-500 p-4 mt-2">
+  <div class="bg-green-300 p-4 mt-4 rounded-lg">
     <app-workout-list></app-workout-list>
   </div>
-  </div>
- 
 </div>
 
   `,
   styles: []
 })
 export class AppComponent {
-  title = 'health-tracker-challenge';
+  title = 'Health_Challenge_Tracker';
 }
 
 
