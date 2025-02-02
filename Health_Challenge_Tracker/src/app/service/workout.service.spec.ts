@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { WorkoutService } from './workout.service';
-import { of } from 'rxjs';
 
 describe('WorkoutService', () => {
   let service: WorkoutService;

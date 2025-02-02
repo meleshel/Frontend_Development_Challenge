@@ -10,33 +10,45 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   standalone: true,
   imports: [CommonModule, FormsModule, MatInputModule, MatButtonModule, MatFormFieldModule],
   template: `
-   <div>
-  <form (ngSubmit)="submitForm()" >
+   <div class="bg-blue-200 shadow-lg rounded-xl p-6 md:p-8 max-w-md mx-auto">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Track Your Workout</h2>
+  <form (ngSubmit)="submitForm()" class="space-y-6">
     <!-- Username Field -->
     <mat-form-field class="w-full">
-      <mat-label>Username</mat-label>
-      <input matInput [(ngModel)]="username" name="username" required class="border-2 border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <mat-label class="text-gray-600 font-medium">Username</mat-label>
+      <input matInput [(ngModel)]="username" name="username" required 
+             class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent
+                    transition-all duration-200 placeholder-gray-400 text-gray-700"
+             placeholder="Enter your username">
     </mat-form-field>
 
     <!-- Workout Type Field -->
     <mat-form-field class="w-full">
-      <mat-label>Workout Type</mat-label>
-      <input matInput [(ngModel)]="workoutType" name="workoutType" required class="border-2 border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <mat-label class="text-gray-600 font-medium">Workout Type</mat-label>
+      <input matInput [(ngModel)]="workoutType" name="workoutType" required
+             class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent
+                    transition-all duration-200 placeholder-gray-400 text-gray-700"
+             placeholder="e.g., Running, Weightlifting">
     </mat-form-field>
 
     <!-- Minutes Field -->
     <mat-form-field class="w-full">
-      <mat-label>Minutes</mat-label>
-      <input matInput type="number" [(ngModel)]="minutes" name="minutes" required class="border-2 border-gray-300 p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+      <mat-label class="text-gray-600 font-medium">Duration</mat-label>
+      <input matInput type="number" [(ngModel)]="minutes" name="minutes" required
+             class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent
+                    transition-all duration-200 placeholder-gray-400 text-gray-700"
+             placeholder="Minutes exercised">
+      <span matSuffix class="text-gray-500 pr-2">minutes</span>
     </mat-form-field>
 
     <!-- Submit Button -->
-    <button mat-raised-button color="primary" type="submit" class="w-full py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300 mt-4">
-      Add Workout
+    <button mat-raised-button color="primary" type="submit" 
+            class="w-full py-3.5 text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 
+                   transition-all duration-300 shadow-md hover:shadow-lg font-semibold text-lg">
+      Log Workout
     </button>
   </form>
 </div>
-
   `,
   styles: []
 })

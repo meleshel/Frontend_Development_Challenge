@@ -1,11 +1,65 @@
-
 @import "tailwindcss";
 
 body {
-  background-color: orange; 
+  background-image: url('assets/images/green_land_scape.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+}
+
+.bg-gray-900:hover {
+  background-color: #E3F2FD;
+}
+
+.text-white:hover {
+  color: #e2e8f0;
+}
+
+.bg-light-blue-100:hover {
+  background-color: #cfeffd;
+}
+
+.text-black:hover {
+  color: #2d3748;
 }
 
 
+.mat-row:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+button:hover {
+  background-color: #4299e1;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.mat-row:hover {
+  background-color: #cce7ff;
+  cursor: pointer;
+}
 
 
+.mat-cell:hover {
+  background-color: #b3d9ff;
+  cursor: pointer;
+}
 
+.mat-row,
+.mat-cell {
+  transition: background-color 0.3s;
+}
+
+.mat-column-username:hover {
+  background-color: #e3f2fd;
+}
+
+.mat-column-workoutType:hover {
+  background-color: #d1ecf1;
+}
+
+.mat-column-minutes:hover {
+  background-color: #cce7ff;
+}

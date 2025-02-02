@@ -7,18 +7,24 @@ import { WorkoutListComponent } from './components/workout-list/workout-list.com
   standalone: true,
   imports: [WorkoutFormComponent, WorkoutListComponent],
   template: `
-<div>
-  <h1 class="text-center text-2xl font-semibold mb-6">
-    Welcome to {{ title }}!
-  </h1>
+<div class="min-h-screen bg-gray-50 p-4 md:p-8 ">
+  <header  class="text-center mb-8 bg-blue-200 p-6 rounded-xl">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+     Welcome to {{title}}
+    </h1>
+  </header>
 
-  <div class="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-lg sm:max-w-md md:max-w-lg bg-blue-300 p-4 rounded-lg">
-    <app-workout-form></app-workout-form>
-  </div>
-  
-  <div class="bg-green-300 p-4 mt-4 rounded-lg">
-    <app-workout-list></app-workout-list>
-  </div>
+  <main class="max-w-4xl mx-auto">
+    <!-- Form Section -->
+    <section class="bg-white rounded-xl shadow-md p-6 mb-8">
+      <app-workout-form></app-workout-form>
+    </section>
+
+    <!-- Workout List Section -->
+    <section class="bg-white rounded-xl shadow-md p-6">
+      <app-workout-list></app-workout-list>
+    </section>
+  </main>
 </div>
 
   `,

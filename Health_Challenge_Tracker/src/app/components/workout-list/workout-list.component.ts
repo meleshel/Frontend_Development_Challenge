@@ -14,7 +14,7 @@ import { WorkoutService } from '../../service/workout.service';
 @Component({
   selector: 'app-workout-list',
   template: `
-    <div >
+    <div class="bg-blue-200 p-6 rounded-lg" >
   <div class="filter-container flex gap-4 mb-6">
     <!-- Search Field -->
     <mat-form-field appearance="fill" class="w-full sm:w-64">
@@ -35,15 +35,15 @@ import { WorkoutService } from '../../service/workout.service';
   <div class="table-container" *ngIf="filteredWorkouts.length > 0">
     <mat-table [dataSource]="dataSource" class="w-full shadow-lg rounded-lg overflow-hidden">
       <ng-container matColumnDef="username">
-        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="font-semibold text-blue-900">Username</mat-header-cell>
         <mat-cell *matCellDef="let workout">{{ workout.username }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="workoutType">
-        <mat-header-cell *matHeaderCellDef>Workout Type</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="font-semibold text-blue-900">Workout Type</mat-header-cell>
         <mat-cell *matCellDef="let workout">{{ workout.workoutType }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="minutes">
-        <mat-header-cell *matHeaderCellDef>Minutes</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="font-semibold text-blue-900">Minutes</mat-header-cell>
         <mat-cell *matCellDef="let workout">{{ workout.minutes }}</mat-cell>
       </ng-container>
 
@@ -52,7 +52,7 @@ import { WorkoutService } from '../../service/workout.service';
     </mat-table>
 
     <!-- Pagination Controls -->
-    <mat-paginator [pageSize]="pageSize" 
+    <mat-paginator class="bg-light-blue-50 p-2 rounded-lg" [pageSize]="pageSize" 
                    [pageSizeOptions]="[5, 10, 20]" 
                    [length]="filteredWorkouts.length" 
                    (page)="onPageChange($event)" 
