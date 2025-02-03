@@ -1,30 +1,30 @@
 import { Injectable } from '@angular/core';
+import { Workout } from '../types/workout.types';
+import { StorageService } from './storage.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
-})
+    providedIn: 'root',
+  })
 export class WorkoutService {
-  private workoutsSource = new BehaviorSubject<any[]>(this.loadInitialData());
-  workouts$ = this.workoutsSource.asObservable();
+    private workoutsSubject = new BehaviorSubject<Workout[]>([]);
+    public workouts$ = this.workoutsSubject.asObservable();  
 
-  private loadInitialData() {
-    const storedWorkouts = localStorage.getItem('workouts');
-    return storedWorkouts ? JSON.parse(storedWorkouts) : [
-      { username: 'John', workoutType: 'Cardio', minutes: 30 },
-      { username: 'Alice', workoutType: 'Strength', minutes: 45 },
-      { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
-    ];
-  }
+    constructor(private storageService: StorageService) {
+        const storedWorkouts = this.storageService.getItem('userWorkouts');
+        if (storedWorkouts) {
+            this.workoutsSubject.next(JSON.parse(storedWorkouts));
+        }
+    }
 
-  addWorkout(workout: any) {
-    const currentWorkouts = this.workoutsSource.getValue();
-    const updatedWorkouts = [...currentWorkouts, workout];
-    this.workoutsSource.next(updatedWorkouts);
-    localStorage.setItem('workouts', JSON.stringify(updatedWorkouts));
-  }
+    addWorkout(workout: Workout): void {
+        const updatedWorkouts = [...this.workoutsSubject.value, workout];
+        this.workoutsSubject.next(updatedWorkouts);
+        this.storageService.setItem('userWorkouts', JSON.stringify(updatedWorkouts));
+    }
 
-  getWorkouts() {
-    return this.workoutsSource.getValue();
-  }
+    getWorkouts(): Workout[] {
+        return this.workoutsSubject.value;
+    }
 }
+

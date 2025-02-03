@@ -1,8 +1,9 @@
 export interface Workout {
-    type: string;
-    minutes: number;
-  }
-  
+  username: string;
+  workoutType: string;
+  minutes: number | null;  
+}
+
   export interface User {
     id: number;
     name: string;

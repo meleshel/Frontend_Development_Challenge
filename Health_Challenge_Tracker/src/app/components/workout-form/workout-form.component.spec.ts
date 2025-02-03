@@ -39,12 +39,15 @@ describe('WorkoutFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  //test to verify if the service method is called when the form is valid
   it('should call addWorkout when form is valid', () => {
     component.username = 'JohnDoe';
     component.workoutType = 'Running';
     component.minutes = 30;
     const form = { valid: true } as NgForm;
+
     component.submitForm(form);
+
     expect(workoutService.addWorkout).toHaveBeenCalledWith({
       username: 'JohnDoe',
       workoutType: 'Running',
@@ -52,6 +55,7 @@ describe('WorkoutFormComponent', () => {
     });
   });
 
+  //test to ensure service method is not called for invalid forms
   it('should not call addWorkout when form is invalid', () => {
     component.username = '';
     component.workoutType = 'R';
@@ -61,6 +65,7 @@ describe('WorkoutFormComponent', () => {
     expect(workoutService.addWorkout).not.toHaveBeenCalled();
   });
 
+  //test to verify if the form resets after a successful submission
   it('should clear form fields after successful submission', () => {
     component.username = 'JaneDoe';
     component.workoutType = 'Cycling';
@@ -76,6 +81,7 @@ describe('WorkoutFormComponent', () => {
     expect(component.minutes).toBeNull();
   });
 
+  //test to verify validation errors are displayed for required fields
   it('should display validation errors for required fields', fakeAsync(() => {
     const usernameInput = fixture.debugElement.query(By.css('[name="username"]')).nativeElement;
     usernameInput.dispatchEvent(new Event('input'));
@@ -87,6 +93,7 @@ describe('WorkoutFormComponent', () => {
     expect(errorMessages[0].nativeElement.textContent).toContain('Username is required');
   }));
 
+  //test to ensure the submit button is disabled when the form is invalid
   it('should disable submit button when form is invalid', fakeAsync(() => {
     component.username = 'Jo';
     component.workoutType = '';
@@ -97,6 +104,7 @@ describe('WorkoutFormComponent', () => {
     expect(submitButton.disabled).toBeTrue();
   }));
 
+  //test for showing minLength validation errors for username
   it('should show minlength error for username', fakeAsync(() => {
     component.username = 'Ab';
     const usernameInput = fixture.debugElement.query(By.css('[name="username"]')).nativeElement;
@@ -114,6 +122,7 @@ describe('WorkoutFormComponent', () => {
     }
   }));
 
+  //test for showing max validation errors for minutes input
   it('should show max validation error for minutes', fakeAsync(() => {
     const minutesInput = fixture.debugElement.query(By.css('[name="minutes"]')).nativeElement;
     minutesInput.value = '400';
