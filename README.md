@@ -1,169 +1,92 @@
 # Health Challenge Tracker - Frontend Development Challenge
 
-This project is an Angular 14+ SPA where users can input and track workout information. The app stores data in `localStorage` and provides the following functionalities:
+## Project Overview
 
-- **Add a User**: Input for user name, workout type, and workout minutes.
-- **User Workout List**: Display users' workout data in a table.
-- **Search and Filter**: Search by user name and filter by workout type.
-- **Pagination**: For displaying more than 5 users.
-- **Optional Feature**: Display workout progress using charts.
-- **Unit Tests**: 100% code coverage for a component and a service.
+The **Health Challenge Tracker** is a single-page application (SPA) built using **Angular 14+** that allows users to track and manage their workouts. The application allows users to log their name, workout type, and workout minutes, and provides features such as searching, filtering, and pagination.
 
-## Technologies Used:
-- **Angular 14+**: Main framework.
-- **Tailwind CSS**: For styling.
-- **Angular Material**: For UI components.
-- **localStorage**: For storing user workout data.
-- **Chart.js** (optional): For displaying workout progress.
+## Key Features
 
+- **User and Workout Input**:
+  - Users can input their name, workout type, and workout minutes.
+  - Workout data is saved in **localStorage** to persist user data between sessions.
 
-## Requirements & Features:
+- **Workout List Display**:
+  - Workouts are displayed in a **table format**.
+  - Users can see their list of workouts and the total time spent on each type.
 
-### 1. Input Fields:
-- **User Name**
-- **Workout Type**
-- **Workout Minutes**
-- **Submit Button**
+- **Search and Filter**:
+  - **Search** by username.
+  - **Filter** by workout type (e.g., Running, Yoga, Cycling).
 
-### 2. User Workout List:
-- Display in a table/grid format with `name`, `workout type`, and `minutes`.
-- Ability to search by username.
-- Ability to filter by workout type.
-- Pagination for more than 5 users.
+- **Pagination**:
+  - Displays a **maximum of 5 users per page**. Users can navigate between pages if more than 5 users are added.
 
-### 3. Data Structure (Stored in `localStorage`):
+## Technologies Used
 
+- **Angular 14+** for building the SPA.
+- **Angular Material** for UI components like tables, form fields, and pagination.
+- **Tailwind CSS** for styling.
+- **localStorage** for persisting user and workout data.
+
+## Data Model
+
+The app stores user data in the following structure:
+
+## Data Structure
+
+The app stores user data in the following structure:
+
+json
 userData = [
   {
-    id: 1,
-    name: 'John Doe',
-    workouts: [
-      { type: 'Running', minutes: 30 },
-      { type: 'Cycling', minutes: 45 }
+    "id": 1,
+    "name": "John Doe",
+    "workouts": [
+      { "type": "Running", "minutes": 30 },
+      { "type": "Cycling", "minutes": 45 }
     ]
   },
-  ...
-];
-4. Optional Chart: Display workout progress (e.g., total minutes per workout type).
-Setup Instructions:
-1. Install Dependencies:
-npm install
-2. Run the Application:
-ng serve
-Open the browser and visit http://localhost:4200 to view the application.
-3. Tailwind Configuration:
-Ensure that tailwind.config.ts and postcss.config.js are properly set up in the root directory as per the instructions.
-4. Testing:
-Unit Tests: 100% code coverage on at least one component and one service. Run tests with:
-ng test --code-coverage
-
-Here's the updated README in markdown format with appropriate headers:
-
-markdown
-Copy
-Edit
-# Health Challenge Tracker - Frontend Development Challenge
-
-This project is an Angular 14+ SPA where users can input and track workout information. The app stores data in `localStorage` and provides the following functionalities:
-
-- **Add a User**: Input for user name, workout type, and workout minutes.
-- **User Workout List**: Display users' workout data in a table.
-- **Search and Filter**: Search by user name and filter by workout type.
-- **Pagination**: For displaying more than 5 users.
-- **Optional Feature**: Display workout progress using charts.
-- **Unit Tests**: 100% code coverage for a component and a service.
-
-## Technologies Used:
-- **Angular 14+**: Main framework.
-- **Tailwind CSS**: For styling.
-- **Angular Material**: For UI components.
-- **localStorage**: For storing user workout data.
-- **Chart.js** (optional): For displaying workout progress.
-
----
-
-## Requirements & Features:
-
-### 1. Input Fields:
-- **User Name**
-- **Workout Type**
-- **Workout Minutes**
-- **Submit Button**
-
-### 2. User Workout List:
-- Display in a table/grid format with `name`, `workout type`, and `minutes`.
-- Ability to search by username.
-- Ability to filter by workout type.
-- Pagination for more than 5 users.
-
-### 3. Data Structure (Stored in `localStorage`):
-```js
-userData = [
   {
-    id: 1,
-    name: 'John Doe',
-    workouts: [
-      { type: 'Running', minutes: 30 },
-      { type: 'Cycling', minutes: 45 }
+    "id": 2,
+    "name": "Jane Smith",
+    "workouts": [
+      { "type": "Swimming", "minutes": 60 },
+      { "type": "Running", "minutes": 20 }
     ]
-  },
-  ...
-];
-4. Optional Chart: Display workout progress (e.g., total minutes per workout type).
-Setup Instructions:
-1. Install Dependencies:
-bash
-Copy
-Edit
-npm install
-2. Run the Application:
-bash
-Copy
-Edit
-ng serve
-Open the browser and visit http://localhost:4200 to view the application.
+  }
+]
 
-3. Tailwind Configuration:
-Ensure that tailwind.config.ts and postcss.config.js are properly set up in the root directory as per the instructions.
+## Setup Instructions 
 
-4. Testing:
-Unit Tests: 100% code coverage on at least one component and one service. Run tests with:
-bash
-Copy
-Edit
-ng test --code-coverage
+If you wish to run the project locally, follow these steps:
 
-Features Overview:
-Add Users: Add workout information via input forms, storing data in localStorage.
-Table/Grid View: Displays users and their workouts.
-Search & Filter: Search by username and filter by workout type.
-Pagination: Handles displaying more than 5 users.
-Optional Charts: Visualize user progress using Chart.js or any preferred charting library.
+1. Clone the repository.
+2. Run `npm install` to install the dependencies.
+3. Run `ng serve` to start the development server.
 
-Unit Test Coverage:
-100% test coverage for the following:
-Component: user-form.component.ts for adding users.
-Service: workout.service.ts for handling the workout data.
+For a fully functional version, visit the deployed link below.
 
-Bonus Feature (Charts):
-Use Chart.js or another charting library to display workout data. Example chart could be:
-Bar Chart: Total workout minutes per workout type.
+## Features in Detail
 
+- **Search by Username**: Users can search for other users based on their name.
+- **Filter by Workout Type**: Display only specific workout types (e.g., Running, Yoga).
+- **Pagination**: Limit the number of users shown on each page (maximum 5 users).
 
-Hosting:
-Deploy the application to a cloud platform like Netlify, Heroku, or GitHub Pages. The deployed application link will be provided in the README.
+## Unit Testing
 
-Edge Cases Handled:
-If no workouts are added, an empty message will be shown.
-If pagination exceeds available users, pagination will adjust dynamically.
+Unit tests have been implemented for the key component and service:
 
-Deployed Link & GitHub Repository:
-GitHub Repo: [Your GitHub Repo Link]
-Deployed Application: [Deployed Web App Link]
+- **workout-form component**
+- **workout.service**
 
-Video Introduction:
-Please check the Google Drive link for the video recording of your introduction:
+## code coverage
+ The code coverage report can be found below.
 
-Google Drive Link to Video: [Video Link]
+![Code Coverage Report](./Health_Challenge_Tracker/src/assets/images/code_coverage_report.png)
 
+## Deployment
 
+The application is hosted on a cloud service. You can view it here:
+
+- **Deployed Application**: [Insert deployed link here]
+- **GitHub Repository**: [Insert GitHub repository link here]
