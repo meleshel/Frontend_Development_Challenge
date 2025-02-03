@@ -84,9 +84,4 @@ Unit tests have been implemented for the key component and service:
 
 ![Code Coverage Report](./Health_Challenge_Tracker/src/assets/images/code_coverage_report.png)
 
-## Deployment
 
-The application is hosted on a cloud service. You can view it here:
-
-- **Deployed Application**: [Insert deployed link here]
-- **GitHub Repository**: [Insert GitHub repository link here]
