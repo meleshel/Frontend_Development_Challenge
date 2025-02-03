@@ -128,5 +128,4 @@ describe('WorkoutFormComponent', () => {
     expect(maxError).toBeTruthy();
   }));
 
-
 });
