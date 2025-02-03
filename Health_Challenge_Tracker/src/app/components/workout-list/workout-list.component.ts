@@ -16,13 +16,12 @@ import { WorkoutService } from '../../service/workout.service';
   template: `
     <div class="bg-blue-200 p-6 rounded-lg" >
   <div class="filter-container flex gap-4 mb-6">
-    <!-- Search Field -->
+   
     <mat-form-field appearance="fill" class="w-full sm:w-64">
       <mat-label>Search</mat-label>
       <input matInput [(ngModel)]="searchTerm" placeholder="Search" (keyup)="applyFilter()" class="w-full" />
     </mat-form-field>
 
-    <!-- Workout Type Filter -->
     <mat-form-field appearance="fill" class="w-full sm:w-64">
       <mat-label>Filter by Workout Type</mat-label>
       <mat-select [(ngModel)]="selectedWorkoutType" (selectionChange)="applyFilter()">
@@ -51,7 +50,6 @@ import { WorkoutService } from '../../service/workout.service';
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
 
-    <!-- Pagination Controls -->
     <mat-paginator class="bg-light-blue-50 p-2 rounded-lg" [pageSize]="pageSize" 
                    [pageSizeOptions]="[5, 10, 20]" 
                    [length]="filteredWorkouts.length" 

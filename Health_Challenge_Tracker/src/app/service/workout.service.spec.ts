@@ -3,15 +3,15 @@ import { WorkoutService } from './workout.service';
 
 describe('WorkoutService', () => {
   let service: WorkoutService;
+  const defaultWorkouts = [
+    { username: 'John', workoutType: 'Cardio', minutes: 30 },
+    { username: 'Alice', workoutType: 'Strength', minutes: 45 },
+    { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
+  ];
 
   beforeEach(() => {
-    // Clear localStorage before each test to prevent data leakage
     localStorage.clear();
-
-    // Set up testing module
-    TestBed.configureTestingModule({
-      providers: [WorkoutService],
-    });
+    TestBed.configureTestingModule({});
     service = TestBed.inject(WorkoutService);
   });
 
@@ -19,74 +19,61 @@ describe('WorkoutService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should initialize workouts from localStorage if available', () => {
-    const workouts = [
-      { username: 'John', workoutType: 'Cardio', minutes: 30 },
-      { username: 'Alice', workoutType: 'Strength', minutes: 45 },
+  it('should load initial data from localStorage', () => {
+    const mockWorkouts = [
+      { username: 'Test', workoutType: 'Running', minutes: 20 }
     ];
-
-    // Mock localStorage.getItem to return workouts data
-    spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(workouts));
-
-    // Reinitialize the service to simulate the constructor logic
-    const serviceWithWorkouts = new WorkoutService();
-
-    serviceWithWorkouts.workouts$.subscribe(workoutsFromService => {
-      expect(workoutsFromService).toEqual(workouts);
-    });
+    localStorage.setItem('workouts', JSON.stringify(mockWorkouts));
+    const newService = new WorkoutService();
+    expect(newService.getWorkouts()).toEqual(mockWorkouts);
   });
 
-  it('should return default workouts if no data in localStorage', () => {
-    spyOn(localStorage, 'getItem').and.returnValue(null);
-
-    const serviceWithDefaultWorkouts = new WorkoutService();
-    
-    const defaultWorkouts = [
-      { username: 'John', workoutType: 'Cardio', minutes: 30 },
-      { username: 'Alice', workoutType: 'Strength', minutes: 45 },
-      { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
-    ];
-
-    serviceWithDefaultWorkouts.workouts$.subscribe(workoutsFromService => {
-      expect(workoutsFromService).toEqual(defaultWorkouts);
-    });
+  it('should use default workouts when localStorage is empty', () => {
+    const newService = new WorkoutService();
+    expect(newService.getWorkouts()).toEqual(defaultWorkouts);
   });
 
-  it('should update workouts and save them to localStorage', () => {
-    const newWorkouts = [
-      { username: 'Mike', workoutType: 'Strength', minutes: 45 },
-      { username: 'Sarah', workoutType: 'Yoga', minutes: 60 },
-    ];
-
-    // Spy on localStorage.setItem to verify it is called
-    spyOn(localStorage, 'setItem');
-
-    service.updateWorkouts(newWorkouts);
-
-    expect(localStorage.setItem).toHaveBeenCalledWith(
+  it('should add new workout and update localStorage', () => {
+    const newWorkout = { username: 'Mike', workoutType: 'Cycling', minutes: 45 };
+    const setItemSpy = spyOn(localStorage, 'setItem');
+    service.addWorkout(newWorkout);
+    expect(service.getWorkouts()).toContain(newWorkout);
+    expect(setItemSpy).toHaveBeenCalledWith(
       'workouts',
-      JSON.stringify(newWorkouts)
+      JSON.stringify([...defaultWorkouts, newWorkout])
     );
-
-    service.workouts$.subscribe(workoutsFromService => {
-      expect(workoutsFromService).toEqual(newWorkouts);
-    });
   });
 
-  it('should persist workouts to localStorage when updated', () => {
-    const updatedWorkouts = [
-      { username: 'John', workoutType: 'Cardio', minutes: 45 },
-      { username: 'Alice', workoutType: 'Strength', minutes: 60 },
+  it('should append to existing workouts in localStorage', () => {
+    const existingWorkouts = [
+      { username: 'Existing', workoutType: 'Swim', minutes: 30 }
     ];
+    localStorage.setItem('workouts', JSON.stringify(existingWorkouts));
+    const newService = new WorkoutService();
+    const newWorkout = { username: 'New', workoutType: 'Run', minutes: 20 };
+    newService.addWorkout(newWorkout);
+    expect(newService.getWorkouts()).toEqual([...existingWorkouts, newWorkout]);
+  });
 
-    // Spy on localStorage.setItem to check for persistence
-    spyOn(localStorage, 'setItem');
+  it('should emit updated workouts through observable', (done) => {
+    const newWorkout = { username: 'Emma', workoutType: 'Yoga', minutes: 60 };
+    service.workouts$.subscribe(workouts => {
+      if (workouts.length === defaultWorkouts.length + 1) {
+        expect(workouts).toContain(newWorkout);
+        done();
+      }
+    });
 
-    service.updateWorkouts(updatedWorkouts);
+    service.addWorkout(newWorkout);
+  });
 
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'workouts',
-      JSON.stringify(updatedWorkouts)
-    );
+  it('should handle multiple consecutive additions', () => {
+    const workout1 = { username: 'A', workoutType: 'X', minutes: 10 };
+    const workout2 = { username: 'B', workoutType: 'Y', minutes: 20 };
+    service.addWorkout(workout1);
+    service.addWorkout(workout2);
+    expect(service.getWorkouts().length).toBe(defaultWorkouts.length + 2);
+    expect(service.getWorkouts()).toContain(workout1);
+    expect(service.getWorkouts()).toContain(workout2);
   });
 });

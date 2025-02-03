@@ -1,17 +1,21 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { WorkoutFormComponent } from './workout-form.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { WorkoutService } from '../../service/workout.service';
+import { By } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('WorkoutFormComponent', () => {
   let component: WorkoutFormComponent;
   let fixture: ComponentFixture<WorkoutFormComponent>;
+  let workoutService: jasmine.SpyObj<WorkoutService>;
 
   beforeEach(async () => {
+    const workoutServiceSpy = jasmine.createSpyObj('WorkoutService', ['addWorkout']);
+
     await TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -19,105 +23,110 @@ describe('WorkoutFormComponent', () => {
         MatButtonModule,
         MatFormFieldModule
       ],
-      providers: [provideAnimations()],
-      schemas: [NO_ERRORS_SCHEMA],
+      providers: [
+        { provide: WorkoutService, useValue: workoutServiceSpy },
+        provideAnimations()
+      ]
     }).compileComponents();
 
+    workoutService = TestBed.inject(WorkoutService) as jasmine.SpyObj<WorkoutService>;
     fixture = TestBed.createComponent(WorkoutFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should submit the form when valid data is provided', () => {
-    component.username = 'John';
-    component.workoutType = 'Cardio';
+  it('should call addWorkout when form is valid', () => {
+    component.username = 'JohnDoe';
+    component.workoutType = 'Running';
     component.minutes = 30;
+    const form = { valid: true } as NgForm;
+    component.submitForm(form);
+    expect(workoutService.addWorkout).toHaveBeenCalledWith({
+      username: 'JohnDoe',
+      workoutType: 'Running',
+      minutes: 30
+    });
+  });
 
-    spyOn(localStorage, 'setItem');
+  it('should not call addWorkout when form is invalid', () => {
+    component.username = '';
+    component.workoutType = 'R';
+    component.minutes = 0;
+    const form = { valid: false } as NgForm;
+    component.submitForm(form);
+    expect(workoutService.addWorkout).not.toHaveBeenCalled();
+  });
 
-    component.submitForm();
-
-    // Check that setItem was called with the correct data
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'workouts',
-      JSON.stringify([{ username: 'John', workoutType: 'Cardio', minutes: 30 }])
-    );
-    // Check form fields are reset
+  it('should clear form fields after successful submission', () => {
+    component.username = 'JaneDoe';
+    component.workoutType = 'Cycling';
+    component.minutes = 45;
+    const form = {
+      valid: true,
+      reset: jasmine.createSpy('reset')
+    } as unknown as NgForm;
+    component.submitForm(form);
+    expect(form.reset).toHaveBeenCalled();
     expect(component.username).toBe('');
     expect(component.workoutType).toBe('');
     expect(component.minutes).toBeNull();
   });
 
-  it('should not submit the form if data is invalid', () => {
-    component.username = '';
+  it('should display validation errors for required fields', fakeAsync(() => {
+    const usernameInput = fixture.debugElement.query(By.css('[name="username"]')).nativeElement;
+    usernameInput.dispatchEvent(new Event('input'));
+    usernameInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    tick();
+    const errorMessages = fixture.debugElement.queryAll(By.css('mat-error'));
+    expect(errorMessages.length).toBeGreaterThan(0);
+    expect(errorMessages[0].nativeElement.textContent).toContain('Username is required');
+  }));
+
+  it('should disable submit button when form is invalid', fakeAsync(() => {
+    component.username = 'Jo';
     component.workoutType = '';
     component.minutes = null;
+    fixture.detectChanges();
+    tick();
+    const submitButton = fixture.debugElement.query(By.css('button')).nativeElement;
+    expect(submitButton.disabled).toBeTrue();
+  }));
 
-    spyOn(localStorage, 'setItem');
+  it('should show minlength error for username', fakeAsync(() => {
+    component.username = 'Ab';
+    const usernameInput = fixture.debugElement.query(By.css('[name="username"]')).nativeElement;
+    usernameInput.dispatchEvent(new Event('input'));
+    usernameInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    tick();
 
-    component.submitForm();
+    let errorMessage = fixture.debugElement.query(By.css('mat-error'));
+    if (usernameInput.value.length === 0) {
+      expect(errorMessage.nativeElement.textContent).toContain('Username is required');
+    } else {
+      errorMessage = fixture.debugElement.query(By.css('mat-error'));
+      expect(errorMessage.nativeElement.textContent).toContain('Minimum 3 characters required');
+    }
+  }));
 
-    expect(localStorage.setItem).not.toHaveBeenCalled();
-  });
-
-  it('should clear the form fields after submission', () => {
-    component.username = 'Jane';
-    component.workoutType = 'Yoga';
-    component.minutes = 45;
-
-    component.submitForm();
-
-    expect(component.username).toBe('');
-    expect(component.workoutType).toBe('');
-    expect(component.minutes).toBeNull();
-  });
-
-  it('should store workout data in localStorage', () => {
-    const workoutData = { username: 'Mike', workoutType: 'Strength', minutes: 60 };
-
-    spyOn(localStorage, 'setItem');
-    component.username = workoutData.username;
-    component.workoutType = workoutData.workoutType;
-    component.minutes = workoutData.minutes;
-
-    component.submitForm();
-
-    // Verify setItem called with the new workout array
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'workouts',
-      JSON.stringify([workoutData])
+  it('should show max validation error for minutes', fakeAsync(() => {
+    const minutesInput = fixture.debugElement.query(By.css('[name="minutes"]')).nativeElement;
+    minutesInput.value = '400';
+    minutesInput.dispatchEvent(new Event('input'));
+    minutesInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    tick();
+    const errorMessages = fixture.debugElement.queryAll(By.css('mat-error'));
+    const maxError = errorMessages.find(msg =>
+      msg.nativeElement.textContent.includes('Maximum 360 minutes (6 hours)')
     );
-  });
+    expect(maxError).toBeTruthy();
+  }));
 
-  it('should append new workout to localStorage without overwriting', () => {
-    const initialWorkout = { username: 'Alice', workoutType: 'Running', minutes: 40 };
-    const newWorkout = { username: 'Bob', workoutType: 'Cycling', minutes: 60 };
 
-    // Set initial data
-    localStorage.setItem('workouts', JSON.stringify([initialWorkout]));
-
-    spyOn(localStorage, 'setItem');
-
-    component.username = newWorkout.username;
-    component.workoutType = newWorkout.workoutType;
-    component.minutes = newWorkout.minutes;
-
-    component.submitForm();
-
-    // Verify the combined array is passed to setItem
-    const expectedWorkouts = [initialWorkout, newWorkout];
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'workouts',
-      JSON.stringify(expectedWorkouts)
-    );
-  });
 });

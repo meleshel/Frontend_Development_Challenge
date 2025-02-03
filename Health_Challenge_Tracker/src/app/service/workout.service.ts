@@ -5,28 +5,26 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class WorkoutService {
-  private workoutsSource = new BehaviorSubject<any[]>([]);
+  private workoutsSource = new BehaviorSubject<any[]>(this.loadInitialData());
   workouts$ = this.workoutsSource.asObservable();
 
-  constructor() {
+  private loadInitialData() {
     const storedWorkouts = localStorage.getItem('workouts');
-    if (storedWorkouts) {
-      this.workoutsSource.next(JSON.parse(storedWorkouts));
-    } else {
-      this.workoutsSource.next([
-        { username: 'John', workoutType: 'Cardio', minutes: 30 },
-        { username: 'Alice', workoutType: 'Strength', minutes: 45 },
-        { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
-      ]);
-    }
+    return storedWorkouts ? JSON.parse(storedWorkouts) : [
+      { username: 'John', workoutType: 'Cardio', minutes: 30 },
+      { username: 'Alice', workoutType: 'Strength', minutes: 45 },
+      { username: 'Bob', workoutType: 'Yoga', minutes: 60 },
+    ];
+  }
+
+  addWorkout(workout: any) {
+    const currentWorkouts = this.workoutsSource.getValue();
+    const updatedWorkouts = [...currentWorkouts, workout];
+    this.workoutsSource.next(updatedWorkouts);
+    localStorage.setItem('workouts', JSON.stringify(updatedWorkouts));
   }
 
   getWorkouts() {
     return this.workoutsSource.getValue();
-  }
-
-  updateWorkouts(workouts: any[]) {
-    this.workoutsSource.next(workouts);
-    localStorage.setItem('workouts', JSON.stringify(workouts));
   }
 }

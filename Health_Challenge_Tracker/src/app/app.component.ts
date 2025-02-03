@@ -13,14 +13,10 @@ import { WorkoutListComponent } from './components/workout-list/workout-list.com
      Welcome to {{title}}
     </h1>
   </header>
-
   <main class="max-w-4xl mx-auto">
-    <!-- Form Section -->
     <section class="bg-white rounded-xl shadow-md p-6 mb-8">
       <app-workout-form></app-workout-form>
     </section>
-
-    <!-- Workout List Section -->
     <section class="bg-white rounded-xl shadow-md p-6">
       <app-workout-list></app-workout-list>
     </section>
