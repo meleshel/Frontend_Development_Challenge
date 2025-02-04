@@ -3,8 +3,8 @@ import { Workout } from '../types/workout.types';
 import { StorageService } from './storage.service';
 import { BehaviorSubject } from 'rxjs';
 
-// Define default workout data (no id property).
-const defaultWorkoutData: Workout[] = [
+// Export default workout data.
+export const defaultWorkoutData: Workout[] = [
   { username: 'John Doe', workoutType: 'Running', minutes: 30 },
   { username: 'Jane Smith', workoutType: 'Cycling', minutes: 45 },
   { username: 'Mike Johnson', workoutType: 'Yoga', minutes: 60 },
@@ -19,18 +19,22 @@ export class WorkoutService {
 
   constructor(private storageService: StorageService) {
     const storedWorkouts = this.storageService.getItem('userWorkouts');
-    // If storedWorkouts exists and is not an empty array, use it.
     if (storedWorkouts && storedWorkouts !== '[]') {
       this.workoutsSubject.next(JSON.parse(storedWorkouts));
     } else {
-      // Otherwise, initialize with defaultWorkoutData.
-      this.workoutsSubject.next(defaultWorkoutData);
-      this.storageService.setItem('userWorkouts', JSON.stringify(defaultWorkoutData));
+      // Initialize with an empty array so that nothing shows on load.
+      this.workoutsSubject.next([]);
     }
   }
 
   addWorkout(workout: Workout): void {
-    const updatedWorkouts = [...this.workoutsSubject.value, workout];
+    let updatedWorkouts: Workout[];
+    if (this.workoutsSubject.value.length === 0) {
+      // Merge default data with the new workout.
+      updatedWorkouts = [...defaultWorkoutData, workout];
+    } else {
+      updatedWorkouts = [...this.workoutsSubject.value, workout];
+    }
     this.workoutsSubject.next(updatedWorkouts);
     this.storageService.setItem('userWorkouts', JSON.stringify(updatedWorkouts));
   }
