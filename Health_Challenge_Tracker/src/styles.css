@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Base Styles */
 body {
   min-height: 100vh;
   margin: 0;
@@ -7,49 +8,46 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-.bg-gray-900:hover {
-  background-color: #E3F2FD;
-}
+/* Tailwind and Custom Hover Styles */
 
-.text-white:hover {
-  color: #e2e8f0;
+/* Background hover effects */
+.bg-gray-900:hover {
+  background-color: #E3F2FD; /* Light blue on hover */
 }
 
 .bg-light-blue-100:hover {
   background-color: #cfeffd;
 }
 
+/* Text hover effects */
+.text-white:hover {
+  color: #e2e8f0; /* Lighter gray */
+}
+
 .text-black:hover {
-  color: #2d3748;
+  color: #2d3748; /* Darker gray */
 }
 
-
+/* Material Table Row & Cell Hover Effects */
 .mat-row:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-button:hover {
-  background-color: #4299e1;
-  color: white;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.mat-row:hover {
-  background-color: #cce7ff;
+  background-color: #cce7ff; /* Light blue background */
   cursor: pointer;
+  transition: background-color 0.3s;
 }
-
 
 .mat-cell:hover {
   background-color: #b3d9ff;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
+/* Additional transition effects for consistency */
 .mat-row,
 .mat-cell {
   transition: background-color 0.3s;
 }
 
+/* Specific column hover styles */
 .mat-column-username:hover {
   background-color: #e3f2fd;
 }
@@ -60,4 +58,11 @@ button:hover {
 
 .mat-column-minutes:hover {
   background-color: #cce7ff;
+}
+
+/* Button Hover Effects */
+button:hover {
+  background-color: #4299e1;
+  color: white;
+  transition: background-color 0.3s, color 0.3s;
 }
