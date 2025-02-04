@@ -12,6 +12,7 @@ import { Workout } from '../../types/workout.types';
   standalone: true,
   imports: [CommonModule, FormsModule, MatInputModule, MatButtonModule, MatFormFieldModule],
   template: `
+
    <div class="bg-blue-200 shadow-lg rounded-xl p-6 md:p-8 max-w-md mx-auto">
     <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Track Your Workout</h2>
 
@@ -84,6 +85,7 @@ import { Workout } from '../../types/workout.types';
       </button>
     </form>
   </div>
+  
   `,
   styles: []
 })
