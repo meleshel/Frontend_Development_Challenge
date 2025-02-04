@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -74,7 +74,7 @@ import { WorkoutService } from '../../service/workout.service';
             </mat-cell>
           </ng-container>
 
-          <!-- Header and Rows -->
+          <!-- Table Header and Rows -->
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
@@ -104,14 +104,14 @@ import { WorkoutService } from '../../service/workout.service';
   ]
 })
 export class WorkoutListComponent implements OnInit, AfterViewInit {
-  // Define the columns to display in the table.
+  // Table columns to display
   displayedColumns: string[] = ['username', 'workoutType', 'minutes'];
-  // Data source for the table.
+  // Data source for the table
   dataSource = new MatTableDataSource<any>([]);
-  // Holds all workouts and the filtered list.
+  // Holds all workouts and the filtered list
   allWorkouts: any[] = [];
   filteredWorkouts: any[] = [];
-  // Pagination and filter parameters.
+  // Pagination and filter parameters
   pageSize = 5;
   searchTerm = '';
   selectedWorkoutType: string | null = null;
@@ -123,30 +123,40 @@ export class WorkoutListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Subscribe to the workouts observable from the service.
+    // If the service returns an empty array, use default hard-coded values.
     this.workoutService.workouts$.subscribe(workouts => {
-      // Preserve the original functionality: use the service's workouts.
-      this.allWorkouts = [...workouts];
-      // Update the filtered list (default shows all workouts).
+      if (workouts && workouts.length > 0) {
+        this.allWorkouts = [...workouts];
+      } else {
+        // Default values (hard-coded)
+        this.allWorkouts = [
+          { username: 'John Doe', workoutType: 'Cardio', minutes: 30 },
+          { username: 'Jane Smith', workoutType: 'Strength', minutes: 45 },
+          { username: 'Alex Johnson', workoutType: 'Yoga', minutes: 60 }
+        ];
+      }
+      // Apply filter so that "All" shows the entire list.
       this.applyFilter();
     });
   }
 
   ngAfterViewInit(): void {
-    // Attach the paginator to the data source.
+    // Attach the paginator to the table data source.
     this.dataSource.paginator = this.paginator;
   }
 
   /**
-   * Filters the workouts based on the search term and selected workout type.
+   * Applies the search and workout type filters to the workouts list.
    */
   applyFilter(): void {
     this.filteredWorkouts = this.allWorkouts.filter(workout => {
       const searchMatch = workout.username.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const typeMatch = this.selectedWorkoutType === null || workout.workoutType === this.selectedWorkoutType;
+      const typeMatch =
+        this.selectedWorkoutType === null || workout.workoutType === this.selectedWorkoutType;
       return searchMatch && typeMatch;
     });
 
-    // Update the table's data source.
+    // Update the table data source with the filtered workouts.
     this.dataSource.data = this.filteredWorkouts;
 
     // Reset the paginator to the first page.
@@ -156,10 +166,10 @@ export class WorkoutListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Handles paginator page change events.
-   * @param event - The paginator event (includes page size, etc.)
+   * Handles pagination events.
+   * @param event The paginator event containing page details.
    */
-  onPageChange(event: any): void {
+  onPageChange(event: PageEvent): void {
     this.pageSize = event.pageSize;
     this.applyFilter();
   }
