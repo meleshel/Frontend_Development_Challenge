@@ -9,12 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { WorkoutService, defaultWorkoutData } from '../../service/workout.service';
+import { WorkoutService } from '../../service/workout.service';
 
 @Component({
   selector: 'app-workout-list',
   template: `
     <div class="bg-blue-200 p-6 rounded-lg">
+      <!-- Filter Section -->
       <div class="filter-container flex gap-4 mb-6">
         <mat-form-field appearance="fill" class="w-full sm:w-64">
           <mat-label>Search</mat-label>
@@ -37,6 +38,7 @@ import { WorkoutService, defaultWorkoutData } from '../../service/workout.servic
         </mat-form-field>
       </div>
 
+      <!-- Table Section -->
       <div *ngIf="filteredWorkouts.length > 0" class="table-container">
         <mat-table [dataSource]="dataSource" class="w-full shadow-lg rounded-lg overflow-hidden">
           <ng-container matColumnDef="username">
@@ -47,7 +49,6 @@ import { WorkoutService, defaultWorkoutData } from '../../service/workout.servic
               {{ workout.username }}
             </mat-cell>
           </ng-container>
-
           <ng-container matColumnDef="workoutType">
             <mat-header-cell *matHeaderCellDef class="font-semibold text-blue-900">
               Workout Type
@@ -56,7 +57,6 @@ import { WorkoutService, defaultWorkoutData } from '../../service/workout.servic
               {{ workout.workoutType }}
             </mat-cell>
           </ng-container>
-
           <ng-container matColumnDef="minutes">
             <mat-header-cell *matHeaderCellDef class="font-semibold text-blue-900">
               Minutes
@@ -65,11 +65,9 @@ import { WorkoutService, defaultWorkoutData } from '../../service/workout.servic
               {{ workout.minutes }}
             </mat-cell>
           </ng-container>
-
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
-
         <mat-paginator
           class="bg-light-blue-50 p-2 rounded-lg mt-4"
           [pageSize]="pageSize"
@@ -79,6 +77,7 @@ import { WorkoutService, defaultWorkoutData } from '../../service/workout.servic
         </mat-paginator>
       </div>
 
+      <!-- No Results Message -->
       <div *ngIf="filteredWorkouts.length === 0 && (searchTerm !== '' || selectedWorkoutType !== null)"
            class="text-center text-gray-500 mt-4">
         No matching results found.
@@ -109,7 +108,7 @@ export class WorkoutListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.workoutService.workouts$.subscribe(workouts => {
       this.allWorkouts = [...workouts];
-      // If no user-added workouts exist and no filter is applied, show default data.
+      // Call applyFilter to update filteredWorkouts so that "All" shows default data.
       this.applyFilter();
     });
   }
@@ -119,16 +118,11 @@ export class WorkoutListComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(): void {
-    // If there are no workouts from the service and no filters, display default data.
-    if (this.allWorkouts.length === 0 && this.searchTerm.trim() === '' && this.selectedWorkoutType === null) {
-      this.filteredWorkouts = defaultWorkoutData;
-    } else {
-      this.filteredWorkouts = this.allWorkouts.filter(workout => {
-        const searchMatch = workout.username.toLowerCase().includes(this.searchTerm.toLowerCase());
-        const typeMatch = this.selectedWorkoutType === null || workout.workoutType === this.selectedWorkoutType;
-        return searchMatch && typeMatch;
-      });
-    }
+    this.filteredWorkouts = this.allWorkouts.filter(workout => {
+      const searchMatch = workout.username.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const typeMatch = this.selectedWorkoutType === null || workout.workoutType === this.selectedWorkoutType;
+      return searchMatch && typeMatch;
+    });
     this.dataSource.data = this.filteredWorkouts;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
