@@ -13,22 +13,11 @@ import { WorkoutService } from '../../service/workout.service';
 
 @Component({
   selector: 'app-workout-list',
-  standalone: true,
-  imports: [
-    FormsModule,
-    CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-  ],
   template: `
     <div class="bg-blue-200 p-6 rounded-lg">
-      <!-- Filters Section -->
-      <div class="filter-container flex flex-wrap gap-4 mb-6">
-        <!-- Search Filter -->
+      <!-- Filter Section -->
+      <div class="filter-container flex gap-4 mb-6">
+        <!-- Search Input -->
         <mat-form-field appearance="fill" class="w-full sm:w-64">
           <mat-label>Search</mat-label>
           <input
@@ -85,7 +74,7 @@ import { WorkoutService } from '../../service/workout.service';
             </mat-cell>
           </ng-container>
 
-          <!-- Table Header and Rows -->
+          <!-- Header and Rows -->
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
@@ -96,34 +85,33 @@ import { WorkoutService } from '../../service/workout.service';
           [pageSize]="pageSize"
           [pageSizeOptions]="[5, 10, 20]"
           [length]="filteredWorkouts.length"
-          (page)="onPageChange($event)"
-        >
+          (page)="onPageChange($event)">
         </mat-paginator>
       </div>
 
       <!-- No Results Message -->
-      <div
-        *ngIf="filteredWorkouts.length === 0 && (searchTerm !== '' || selectedWorkoutType !== null)"
-        class="text-center text-gray-500 mt-4"
-      >
+      <div *ngIf="filteredWorkouts.length === 0 && (searchTerm !== '' || selectedWorkoutType !== null)"
+           class="text-center text-gray-500 mt-4">
         No matching results found.
       </div>
     </div>
   `,
   styles: [],
+  standalone: true,
+  imports: [
+    FormsModule, CommonModule, MatTableModule, MatPaginatorModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule
+  ]
 })
 export class WorkoutListComponent implements OnInit, AfterViewInit {
-  // Table columns to display
+  // Define the columns to display in the table.
   displayedColumns: string[] = ['username', 'workoutType', 'minutes'];
-
-  // Data source for the table
+  // Data source for the table.
   dataSource = new MatTableDataSource<any>([]);
-
-  // Arrays to hold all workouts and those filtered by search/selection
+  // Holds all workouts and the filtered list.
   allWorkouts: any[] = [];
   filteredWorkouts: any[] = [];
-
-  // Filtering and pagination parameters
+  // Pagination and filter parameters.
   pageSize = 5;
   searchTerm = '';
   selectedWorkoutType: string | null = null;
@@ -134,45 +122,42 @@ export class WorkoutListComponent implements OnInit, AfterViewInit {
   constructor(private workoutService: WorkoutService) {}
 
   ngOnInit(): void {
-    // Subscribe to the workouts observable from the service
-    this.workoutService.workouts$.subscribe((workouts) => {
+    // Subscribe to the workouts observable from the service.
+    this.workoutService.workouts$.subscribe(workouts => {
+      // Preserve the original functionality: use the service's workouts.
       this.allWorkouts = [...workouts];
-      // Call applyFilter to update the table when new data arrives
+      // Update the filtered list (default shows all workouts).
       this.applyFilter();
     });
   }
 
   ngAfterViewInit(): void {
-    // Set the paginator for the table data source
+    // Attach the paginator to the data source.
     this.dataSource.paginator = this.paginator;
   }
 
   /**
-   * Applies filters (search term and workout type) to the workouts list.
+   * Filters the workouts based on the search term and selected workout type.
    */
   applyFilter(): void {
-    this.filteredWorkouts = this.allWorkouts.filter((workout) => {
-      const searchMatch = workout.username
-        .toLowerCase()
-        .includes(this.searchTerm.toLowerCase());
-      const typeMatch =
-        this.selectedWorkoutType === null ||
-        workout.workoutType === this.selectedWorkoutType;
+    this.filteredWorkouts = this.allWorkouts.filter(workout => {
+      const searchMatch = workout.username.toLowerCase().includes(this.searchTerm.toLowerCase());
+      const typeMatch = this.selectedWorkoutType === null || workout.workoutType === this.selectedWorkoutType;
       return searchMatch && typeMatch;
     });
 
-    // Update table data source with the filtered results
+    // Update the table's data source.
     this.dataSource.data = this.filteredWorkouts;
 
-    // Reset paginator to the first page when filter is applied
+    // Reset the paginator to the first page.
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
 
   /**
-   * Handles changes from the paginator.
-   * @param event - Pagination event (page size, page index, etc.)
+   * Handles paginator page change events.
+   * @param event - The paginator event (includes page size, etc.)
    */
   onPageChange(event: any): void {
     this.pageSize = event.pageSize;
