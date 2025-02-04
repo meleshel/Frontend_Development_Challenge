@@ -105,6 +105,7 @@ import { Workout } from '../../types/workout.types';
         <button
           mat-raised-button
           color="primary"
+          
           type="submit"
           [disabled]="workoutForm.invalid"
           class="w-full py-3.5 text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg font-semibold text-lg">
